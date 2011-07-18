@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from setuptools import setup,find_packages
+from setuptools import setup
 
 METADATA = dict(
     name='django-riak-sessions',
@@ -11,6 +11,7 @@ METADATA = dict(
     url='http://github.com/flashingpumpkin/django-riak-sessions',
     keywords='django riak session backend',
     install_requires=['riak'],
+    include_package_data = False,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
@@ -21,7 +22,7 @@ METADATA = dict(
         'Programming Language :: Python',
         'Framework :: Django',
     ],
-    packages=find_packages(),
+    packages=['riak_sessions'],
 )
 
 if __name__ == '__main__':
