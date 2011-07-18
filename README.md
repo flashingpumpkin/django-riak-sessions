@@ -9,7 +9,7 @@
 * Add `riak_sessions` to your installed apps
 * Add the session engine to your settings:
 
-    SESSION_ENGINE = 'riak_sessions.backends.riak'
+        SESSION_ENGINE = 'riak_sessions.backends.riak'
 
 ## Optional Configuration
 

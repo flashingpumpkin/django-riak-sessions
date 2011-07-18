@@ -15,7 +15,9 @@ Configuration
 -  Add ``riak_sessions`` to your installed apps
 -  Add the session engine to your settings:
 
-   SESSION\_ENGINE = 'riak\_sessions.backends.riak'
+   ::
+
+       SESSION_ENGINE = 'riak_sessions.backends.riak'
 
 
 Optional Configuration
