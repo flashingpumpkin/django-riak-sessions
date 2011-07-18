@@ -1,5 +1,3 @@
-__version__ = "0.0.1"
-
 import riak
 from django.conf import settings
 

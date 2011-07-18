@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 from setuptools import setup,find_packages
-import riak_sessions
 
 METADATA = dict(
     name='django-riak-sessions',
-    version=riak_sessions.__version__,
+    version="0.0.1",
     author='Alen Mujezinovic',
     author_email='flashingpumpkin@gmail.com',
     description='Riak session backend for django',
