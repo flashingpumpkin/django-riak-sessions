@@ -3,7 +3,7 @@ from setuptools import setup
 
 METADATA = dict(
     name='django-riak-sessions',
-    version="0.0.1",
+    version="0.0.2",
     author='Alen Mujezinovic',
     author_email='flashingpumpkin@gmail.com',
     description='Riak session backend for django',
@@ -22,7 +22,7 @@ METADATA = dict(
         'Programming Language :: Python',
         'Framework :: Django',
     ],
-    packages=['riak_sessions'],
+    packages=['riak_sessions', 'riak_sessions.backends'],
 )
 
 if __name__ == '__main__':
