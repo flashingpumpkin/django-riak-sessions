@@ -18,6 +18,7 @@ are as follows:
 
     import riak
     RIAK_PORT = 8087
+    fIAK_HOST = '127.0.0.1'
     RIAK_TRANSPORT_CLASS = riak.RiakPbcTransport
     RIAK_BUCKET = 'django-riak-sessions'
     RIAK_SESSION_KEY = 'session:%(session_key)s'
