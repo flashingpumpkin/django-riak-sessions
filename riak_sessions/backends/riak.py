@@ -16,8 +16,13 @@ class SessionStore(SessionBase):
         self.riak_obj = None
         super(SessionStore, self).__init__(session_key)
 
+    def _get_riak_key(self, session_key=None):
+        if not session_key:
+            session_key = self.session_key
+        return RIAK_KEY % dict(session_key=session_key)
+
     def exists(self, session_key):
-        session = self.bucket.get(RIAK_KEY % {'session_key': session_key})
+        session = self.bucket.get(self._get_riak_key(session_key))
         return session.exists()
 
     def create(self):
@@ -30,8 +35,7 @@ class SessionStore(SessionBase):
         data = { 'data': encoded_session_data, 'expire': self.get_expiry_age() }
 
         if must_create or self.riak_obj is None:
-            self.riak_obj = self.bucket.new(RIAK_KEY % {
-                'session_key': self.session_key })
+            self.riak_obj = self.bucket.new(self._get_riak_key())
 
         self.riak_obj.set_data(data)
         self.riak_obj.store()
@@ -39,10 +43,10 @@ class SessionStore(SessionBase):
     def delete(self, session_key=None):
         if session_key is None:
             session_key = self.session_key
-        self.bucket.get(RIAK_KEY % {'session_key': session_key}).delete()
+        self.bucket.get(self._get_riak_key(session_key)).delete()
 
     def load(self):
-        self.riak_obj = self.bucket.get(RIAK_KEY % dict(session_key=self.session_key))
+        self.riak_obj = self.bucket.get(self._get_riak_key())
         if not self.riak_obj.exists():
             self.create()
         data = self.riak_obj.get_data()
