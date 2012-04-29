@@ -65,10 +65,10 @@ class SessionStore(SessionBase):
             session_data = session.get_data()
 
             # only return unexpired sessions
-            expire_date = datetime.fromtimestamp(session_data['_expire_date'])
+            expire_date = datetime.fromtimestamp(session_data['expire'])
             now = datetime.now()
             if (now - expire_date) < timedelta(seconds=settings.SESSION_COOKIE_AGE):
-                decoded = self.decode(session_data['_encoded_data'])
+                decoded = self.decode(session_data['data'])
                 return decoded
 
         self.create()
