@@ -1,0 +1,2 @@
+protobuf
+django==1.3.1

@@ -3,7 +3,7 @@ from setuptools import setup
 
 METADATA = dict(
     name='django-riak-sessions',
-    version="0.0.3",
+    version="0.0.4",
     author='Alen Mujezinovic',
     author_email='flashingpumpkin@gmail.com',
     description='Riak session backend for django',
