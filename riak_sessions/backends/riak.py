@@ -7,6 +7,8 @@ from riak_sessions import bucket
 
 
 RIAK_KEY = getattr(settings, 'RIAK_SESSION_KEY', 'session:%(session_key)s')
+# Secondary indexes requires python package riak>=1.4.0 and Riak's ELevelDB backend
+RIAK_SESSION_USE_2I = getattr(settings, 'RIAK_SESSION_USE_2I', False)
 
 
 class SessionStore(SessionBase):
@@ -21,6 +23,9 @@ class SessionStore(SessionBase):
         if not session_key:
             session_key = self.session_key
         return RIAK_KEY % dict(session_key=session_key)
+
+    def _get_expiry_timestamp(self):
+        return int(self.get_expiry_date().strftime("%s"))
 
     def exists(self, session_key):
         session = self.bucket.get(self._get_riak_key(session_key))
@@ -47,10 +52,15 @@ class SessionStore(SessionBase):
         session_data = self._get_session(no_load=must_create)
         encoded_session_data = self.encode(session_data)
         data = {'data': encoded_session_data,
-                'expire': int(self.get_expiry_date().strftime("%s"))}
+                'expire': self._get_expiry_timestamp()}
 
         session = self.bucket.new(self._get_riak_key())
         session.set_data(data)
+        if RIAK_SESSION_USE_2I:
+            session.set_indexes([
+                ('expire_int', self._get_expiry_timestamp()),
+                ('key_bin', self._get_riak_key())
+            ])
         session.store()
 
     def delete(self, session_key=None):
