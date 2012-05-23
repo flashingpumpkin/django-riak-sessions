@@ -34,5 +34,5 @@ values are as follows:
     RIAK_TRANSPORT_CLASS = riak.RiakPbcTransport
     RIAK_BUCKET = 'django-riak-sessions'
     RIAK_SESSION_KEY = 'session:%(session_key)s'
-
+    RIAK_SESSION_USE_2I = False  # Enables secondary indexes (requires client 1.4.0+ and ELevelDB back end)
 
