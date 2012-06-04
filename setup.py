@@ -10,7 +10,7 @@ METADATA = dict(
     long_description=open('README.rst').read(),
     url='http://github.com/flashingpumpkin/django-riak-sessions',
     keywords='django riak session backend',
-    install_requires=['riak'],
+    install_requires=['riak>=1.4.0'],
     include_package_data = False,
     classifiers=[
         'Development Status :: 4 - Beta',
