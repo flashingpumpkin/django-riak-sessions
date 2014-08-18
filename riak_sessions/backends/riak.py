@@ -21,7 +21,7 @@ class SessionStore(SessionBase):
 
     def _get_riak_key(self, session_key=None):
         if not session_key:
-            session_key = self.session_key
+            session_key = self._session_key
         return RIAK_KEY % dict(session_key=session_key)
 
     def _get_expiry_timestamp(self):
@@ -33,7 +33,7 @@ class SessionStore(SessionBase):
 
     def create(self):
         while True:
-            self.session_key = self._get_new_session_key()
+            self._session_key = self._get_new_session_key()
             try:
                 self.save(must_create=True)
             except CreateError:
@@ -65,7 +65,7 @@ class SessionStore(SessionBase):
 
     def delete(self, session_key=None):
         if session_key is None:
-            session_key = self.session_key
+            session_key = self._session_key
         self.bucket.get(self._get_riak_key(session_key)).delete()
 
     def load(self):
