@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.sessions.backends.base import SessionBase, CreateError
 
 from riak_sessions import bucket
+import json
 
 
 RIAK_KEY = getattr(settings, 'RIAK_SESSION_KEY', 'session:%(session_key)s')
@@ -29,7 +30,7 @@ class SessionStore(SessionBase):
 
     def exists(self, session_key):
         session = self.bucket.get(self._get_riak_key(session_key))
-        return session.exists()
+        return session.exists
 
     def create(self):
         while True:
@@ -46,7 +47,7 @@ class SessionStore(SessionBase):
     def save(self, must_create=False):
         if must_create:
             current_value = self.bucket.get(self._get_riak_key())
-            if current_value.exists():
+            if current_value.exists:
                 return CreateError
 
         session_data = self._get_session(no_load=must_create)
@@ -55,7 +56,9 @@ class SessionStore(SessionBase):
                 'expire': self._get_expiry_timestamp()}
 
         session = self.bucket.new(self._get_riak_key())
-        session.set_data(data)
+        # TODO Evaluate performance implications
+        session.data = json.dumps(data)
+
         if RIAK_SESSION_USE_2I:
             session.set_indexes([
                 ('expire_int', self._get_expiry_timestamp()),
@@ -71,8 +74,9 @@ class SessionStore(SessionBase):
     def load(self):
         session = self.bucket.get(self._get_riak_key())
 
-        if session.exists():
-            session_data = session.get_data()
+        if session.exists:
+            # TODO Evaluate performance implications
+            session_data = json.loads(session.data)
 
             # only return unexpired sessions
             expire_date = datetime.fromtimestamp(session_data['expire'])
