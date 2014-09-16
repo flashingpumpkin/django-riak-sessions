@@ -2,10 +2,15 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.sessions.backends.base import SessionBase, CreateError
+from django.contrib.sessions.backends.signed_cookies import SessionStore as SignedCookies
 
 from riak_sessions import bucket
 import json
+import logging
 
+# TODO Remove
+# This is to make sure the logger attaches.
+logger = logging.getLogger("django.contrib.sessions.middleware")
 
 RIAK_KEY = getattr(settings, 'RIAK_SESSION_KEY', 'session:%(session_key)s')
 # Secondary indexes requires python package riak>=1.4.0 and Riak's ELevelDB backend
@@ -34,6 +39,7 @@ class SessionStore(SessionBase):
 
     def create(self):
         while True:
+            logger.info("Creating new session...")
             self._session_key = self._get_new_session_key()
             try:
                 self.save(must_create=True)
@@ -84,6 +90,19 @@ class SessionStore(SessionBase):
             if (now - expire_date) < timedelta(seconds=settings.SESSION_COOKIE_AGE):
                 decoded = self.decode(session_data['data'])
                 return decoded
+        logger.info("Fell through, this session does not exist...")
+        if self._session_key:
+            logger.info("Extracting session from old cookie.")
+            tempSession = SignedCookies(self._session_key)
+            temp_session_state = tempSession.load()
+            self.create()
+            data = {'data': self.encode(temp_session_state),
+                    'expire': self._get_expiry_timestamp()}
 
+            session = self.bucket.new(self._get_riak_key())
+            # TODO Evaluate performance implications
+            session.data = json.dumps(data)
+            session.store()
+            return temp_session_state
         self.create()
         return {}
